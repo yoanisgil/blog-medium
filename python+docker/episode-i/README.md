@@ -17,11 +17,11 @@ For the purpose of this demo we're going to use a very simple [Flask](http://fla
     - A web page, which will present the information returned by the endpoint mentioned above, in a user-friendly way (see screenshot below).
     - A PostgresSQL database which is used to fill-in the timezone for the provided Domain Name or IP Address, when not available in the MaxMind City Database.
     
-![Easy GeoIP Screenshot](https://raw.githubusercontent.com/yoanisgil/medium-blog/master/python%2Bdocker/episode-i/assets/easy-geoip-screenshot.png)
+![Easy GeoIP Screenshot](https://raw.githubusercontent.com/yoanisgil/medium-blog/master/python%2Bdocker/episode-i/assets/easy-geoip-resolve.png)
 
 The PostgresSQL database was generated from the Shapefiles available [here](http://efele.net/maps/tz/world/). For more details on how this database was created take a look at this [link](https://github.com/yoanisgil/tz_world)
 
-# Setting up the development environment
+# Running the Python App for the first time
 
 Let's start with the basis and get the application running. First let''s clone the repository and checkout the Git tag we will be using through this article:
 
@@ -42,6 +42,42 @@ Step 16/16 : CMD supervisord -u www-data -n -c /etc/supervisor/supervisord.conf
 Removing intermediate container 2f8f80a4405d
 Successfully built 368383a4d379
 ```
+
+with the image built, we can now launch the application:
+
+    - docker-compose up
+        app_1          |  * Running on http://0.0.0.0:5000/ (Press CTRL+C to quit)
+        app_1          |  * Restarting with stat
+        tz_world_db_1  | LOG:  database system was shut down at 2017-04-20 10:53:35 UTC
+        tz_world_db_1  | LOG:  MultiXact member wraparound protections are now enabled
+        tz_world_db_1  | LOG:  autovacuum launcher started
+        tz_world_db_1  | LOG:  database system is ready to accept connections
     
+after which you can now go visit http://localhost:5000, and you should see something like this:
 
+![Easy GeoIP First Time Launch](https://raw.githubusercontent.com/yoanisgil/medium-blog/master/python%2Bdocker/episode-i/assets/easy-geoip-first-time.png)
 
+# First Dive into The Application
+
+Ok, that was quick. In just a matter of minutes we were able to have a fully working application and with very little effort. Let's see how was this possible. The very first thing that we did was to run:
+
+    - docker-comspoe build app
+
+This command is telling Docker Compose to build the service app, which is defined as follows in  the [docker-compose.yml file](https://github.com/yoanisgil/easygeoip/blob/blog-episode-i/docker-compose.yml):
+
+```yml
+version: '2'
+
+services:
+    app:
+      build: .
+      image: easygeoip_app
+      command: ["python", "/srv/app/main.py"]
+      volumes:
+        - .:/srv/app
+      ports:
+       - "5000:5000"
+      environment:
+        - DB_PASSWORD=thepassword
+        - DEBUG=1
+```
