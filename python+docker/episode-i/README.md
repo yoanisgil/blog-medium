@@ -1,12 +1,12 @@
 # Python + Docker: From development to production: Episode I
 
-For the last two years I've been using Docker to deliver almost every single project I've been working on.It's been a long journey where I've had the opportunity to learn an interesting set of new technologies and most importantly how to get code shipped to production in a reliable, predictable and trustable way.
+For the last two years or so I've been using Docker to deliver almost every single project I've been involved with.It's been a long journey where I've had the opportunity to learn an interesting set of new technologies and most importantly how to get code shipped to production in a reliable, predictable and trustable way.
 
-Python it's the language I feel most comfortable with, which means that those projects, which has been mostly web applications or web APIs, have been developer with heavy usage of frameworks and libraries available under the language's ecosystem.
+[Python](https://www.python.org/) is the language I feel most comfortable with, which means that those projects (mostly web applications or web APIs) have been developed with heavy usage of frameworks and libraries available under the language's ecosystem.
 
 I'd like to share my journey this far, and well it all starts with the development process. I'll split this post into two main articles:
 
-- **Episode I** (i.e this article): Focus on setting up a development environment, powered by Docker/, and will cover as well a glance at Continuous Integration/Continuous Delivery
+- **Episode I** (i.e this article): Focus on the development experience, built upon Docker/Docker Compose.
 - **Episode II**: An overview of the different Cloud solutions I've worked with for deploying Docker applications.
 
 # The Application
@@ -17,13 +17,15 @@ For the purpose of this demo we're going to use a very simple [Flask](http://fla
     - A web page, which will present the information returned by the endpoint mentioned above, in a user-friendly way (see screenshot below).
     - A PostgresSQL database which is used to fill-in the timezone for the provided Domain Name or IP Address, when not available in the MaxMind City Database.
     
-![Easy GeoIP Screenshot](https://raw.githubusercontent.com/yoanisgil/medium-blog/master/python%2Bdocker/episode-i/assets/easy-geoip-resolve.png)
+Below a high-level view of the application architecture:
 
-The PostgresSQL database was generated from the Shapefiles available [here](http://efele.net/maps/tz/world/). For more details on how this database was created take a look at this [link](https://github.com/yoanisgil/tz_world)
+![Easy GeoIP Architecture](https://raw.githubusercontent.com/yoanisgil/medium-blog/master/python%2Bdocker/episode-i/assets/application-architecture.png)
+
+**NOTE**: The PostgresSQL database was generated from the Shapefiles available [here](http://efele.net/maps/tz/world/). For more details on how this database was created take a look at this [link](https://github.com/yoanisgil/tz_world)
 
 # Running the Python App for the first time
 
-Let's start with the basis and get the application running. First let''s clone the repository and checkout the Git tag we will be using through this article:
+Let's start with the basis and get the application running. First we need to clone the application repository and checkout the Git tag we will be using through this article:
 
     - git clone https://github.com/yoanisgil/easygeoip.git
     - git checkout blog-episode-i
@@ -134,5 +136,13 @@ RUN python cli.py update_maxmind_city_db
 # Application entrypoint
 CMD ["supervisord", "-u", "www-data", "-n", "-c", "/etc/supervisor/supervisord.conf"]
 ```
+The Dockerfile it''s pretty explanatory by itself, however let me highlight some of the most important elements present in it:
+
+ - We're using `python:2.7-slim` as our base image since we want to keep our Docker image as light as possible. This is very handy specially when it comes to deployment since the image needs to be pulled before been deployed.
+ - Those instructions which are not supposed to change very often (apt-get install, apt-get update, etc) are added very early in the file so that we can benefit from the caching mechanisms provided by Docker.
+- The `requirements.txt` file is added indepndently from the application code. This is again, to speed-up the build process since app's dependencies should not change that often.
+- The container entrypoint is [supervisord](http://supervisord.org/). The reason we need `supervisord` is because our container needs to run both NGINX and uWSGI. Also because other many goodies that comes with `supervisord`, like that that it can act as a process reaper, make sure process are running, etc. 
+- Neither NGINX, nor uWSGI are running as root (not even `supervisord`). They all run as the user `www-data`.
+
 
 
