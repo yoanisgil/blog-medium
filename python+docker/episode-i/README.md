@@ -4,18 +4,15 @@ For the last two years or so I've been using Docker to deliver almost every sing
 
 [Python](https://www.python.org/) is the language I feel most comfortable with, which means that those projects (mostly web applications or web APIs) have been developed with heavy usage of frameworks and libraries available under the language's ecosystem.
 
-I'd like to share my journey this far, and well it all starts with the development process. I'll split this post into two main articles:
-
-- **Episode I** (i.e this article): Focus on the development experience, built upon Docker/Docker Compose.
-- **Episode II**: An overview of the different Cloud solutions I've worked with for deploying Docker applications.
+I'll be sharing my journey this far in a series of blog posts (hopefully only two). The first one, which I named **Episode I** focuses on the development experience. **Episode II** is an overview of the different Cloud solutions I've worked with for deploying Docker applications and how to run the demo application on container friendly environment.
 
 # The Application
 
 For the purpose of this demo we're going to use a very simple [Flask](http://flask.pocoo.org/) application named [Easy GeoIP](https://github.com/yoanisgil/easygeoip). The application comprises three main components:
 
-    - An endpoint which takes-in a Domain Name or IP Address and uses the MaxMind City database to return all of the information associated to the given Domain Name/IP Address.
-    - A web page, which will present the information returned by the endpoint mentioned above, in a user-friendly way (see screenshot below).
-    - A PostgresSQL database which is used to fill-in the timezone for the provided Domain Name or IP Address, when not available in the MaxMind City Database.
+- An endpoint which takes-in a Domain Name or IP Address and uses the MaxMind City database to return all of the information associated to the given Domain Name/IP Address.
+- A web page, which will present the information returned by the endpoint mentioned above, in a user-friendly way (see screenshot below).
+- A PostgresSQL database which is used to fill-in the timezone for the provided Domain Name or IP Address, when not available in the MaxMind City Database.
     
 Below a high-level view of the application architecture:
 
@@ -66,23 +63,6 @@ Ok, that was quick. In just a matter of minutes we were able to have a fully wor
     - docker-comspoe build app
 
 This command is telling Docker Compose to build the service app, which is defined as follows in  the [docker-compose.yml file](https://github.com/yoanisgil/easygeoip/blob/blog-episode-i/docker-compose.yml):
-
-```yml
-version: '2'
-
-services:
-    app:
-      build: .
-      image: easygeoip_app
-      command: ["python", "/srv/app/main.py"]
-      volumes:
-        - .:/srv/app
-      ports:
-       - "5000:5000"
-      environment:
-        - DB_PASSWORD=thepassword
-        - DEBUG=1
-```
 
 Before we take an in-depth look to the Docker Compose file let's go through the Dockerfile we're using to build the application's image:
 
@@ -141,10 +121,10 @@ The Dockerfile it's pretty explanatory by itself, however let me highlight some 
  - We're using `python:2.7-slim` as our base image since we want to keep our Docker image as light as possible. This is very handy specially when it comes to deployment since the image needs to be pulled before been deployed.
  - Those instructions which are not supposed to change very often (apt-get install, apt-get update, etc) are added very early in the file so that we can benefit from the caching mechanisms provided by Docker.
 - The `requirements.txt` file is added indepndently from the application code. This is again, to speed-up the build process since app's dependencies should not change that often.
-- The container entrypoint is [supervisord](http://supervisord.org/). The reason we need `supervisord` is because our container needs to run both NGINX and uWSGI. Also because other many goodies that comes with `supervisord`, like that that it can act as a process reaper, make sure process are running, etc. 
+- The container entrypoint is [supervisord](http://supervisord.org/). The reason we need `supervisord` is because our container needs to run both NGINX and uWSGI. Also because other many goodies that comes with `supervisord`, like that it can act as a process reaper, make sure processes are always running, etc. 
 - Neither NGINX, nor uWSGI are running as root (not even `supervisord`). They all run as the user `www-data`.
 
-Let's break down the Docker Compose file:
+With the Dockerfile now explained, let's now break down the Docker Compose file:
 
 ```yaml
     app:
@@ -168,3 +148,24 @@ Let's break down the Docker Compose file:
 | `volumes`  |  Mount the current directory at `/srv/app` in the application's container. This is very handy, since an update to the source code won''t require rebuilding the Docker Image (and hence restarting the application container) |
 | `ports`  | Map port `5000` on the container to port `5000`on the host. default all Flask's application use port `5000` the web server port so we're just making sure that it's accesible.   |
 |  `environment` | Here were passing the environment variables required by the application. `DEBUG=1` it's very important since Flask will restart the application whenever the source code is updated.    |
+
+Go ahead, play with the application, modify it and play with it. You will see the development experience it's quite the same as if the application was running outside Docker :).
+
+# Bonus Track: Debugging the Application with PyCharm
+
+So say that there is a bug in the application, a very tricky and difficult one. For sure you could debug the applicaiton using `print` statments or any of the available Flas/Python debuggers ([here](http://werkzeug.pocoo.org/docs/0.11/debug/) and [here](https://docs.python.org/2/library/pdb.html)). 
+
+ Personally I've been using Intellij's PyCharm EAP for the last 3 years or so, mainly because of the consistent development experience between their other products (PHPStorm, WebStorm and AppCode), but also because the Docker support is very good.
+
+
+
+
+
+
+
+
+
+
+
+
+
