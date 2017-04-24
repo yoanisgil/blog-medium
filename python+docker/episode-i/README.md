@@ -18,6 +18,10 @@ Below a high-level view of the application architecture:
 
 ![Easy GeoIP Architecture](https://raw.githubusercontent.com/yoanisgil/medium-blog/master/python%2Bdocker/episode-i/assets/application-architecture.png)
 
+and then you can enter any IP Address/Domain Name of your choice and you should something like this:
+
+![Easy GeoIP Screenshot](https://raw.githubusercontent.com/yoanisgil/medium-blog/master/python%2Bdocker/episode-i/assets/easy-geoip-resolve.png)
+
 **NOTE**: The PostgresSQL database was generated from the Shapefiles available [here](http://efele.net/maps/tz/world/). For more details on how this database was created take a look at this [link](https://github.com/yoanisgil/tz_world)
 
 # Running the Python App for the first time
@@ -155,7 +159,7 @@ Go ahead, play with the application, modify it and play with it. You will see th
 
 So say that there is a bug in the application, a very tricky and difficult one. For sure you could debug the applicaiton using `print` statments or any of the available Flas/Python debuggers ([here](http://werkzeug.pocoo.org/docs/0.11/debug/) and [here](https://docs.python.org/2/library/pdb.html)). 
 
- Personally I've been using Intellij's PyCharm EAP for the last 3 years or so, mainly because of the consistent development experience between their other products (PHPStorm, WebStorm and AppCode), but also because the Docker support is very good.
+Personally I've been using Intellij's PyCharm EAP for the last 3 years or so, mainly because of the consistent development experience between their other products (PHPStorm, WebStorm and AppCode), but also because the Docker support is very good.
 
 
 
