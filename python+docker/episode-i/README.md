@@ -1,6 +1,6 @@
 # Python + Docker: From development to production: Episode I
 
-For the last two years or so I've been using Docker to deliver almost every single project I've been involved with.It's been a long journey where I've had the opportunity to learn an interesting set of new technologies and most importantly how to get code shipped to production in a reliable, predictable and trustable way.
+For the last two years or so I've been using Docker to deliver almost every single project I've been involved with. It's been a long journey where I've had the opportunity to learn an interesting set of new technologies and most importantly how to get code shipped to production in a reliable, predictable and trustable way.
 
 [Python](https://www.python.org/) is the language I feel most comfortable with, which means that those projects (mostly web applications or web APIs) have been developed with heavy usage of frameworks and libraries available under the language's ecosystem.
 
