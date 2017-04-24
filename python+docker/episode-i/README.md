@@ -136,7 +136,7 @@ RUN python cli.py update_maxmind_city_db
 # Application entrypoint
 CMD ["supervisord", "-u", "www-data", "-n", "-c", "/etc/supervisor/supervisord.conf"]
 ```
-The Dockerfile it''s pretty explanatory by itself, however let me highlight some of the most important elements present in it:
+The Dockerfile it's pretty explanatory by itself, however let me highlight some of the most important elements present in it:
 
  - We're using `python:2.7-slim` as our base image since we want to keep our Docker image as light as possible. This is very handy specially when it comes to deployment since the image needs to be pulled before been deployed.
  - Those instructions which are not supposed to change very often (apt-get install, apt-get update, etc) are added very early in the file so that we can benefit from the caching mechanisms provided by Docker.
@@ -144,5 +144,27 @@ The Dockerfile it''s pretty explanatory by itself, however let me highlight some
 - The container entrypoint is [supervisord](http://supervisord.org/). The reason we need `supervisord` is because our container needs to run both NGINX and uWSGI. Also because other many goodies that comes with `supervisord`, like that that it can act as a process reaper, make sure process are running, etc. 
 - Neither NGINX, nor uWSGI are running as root (not even `supervisord`). They all run as the user `www-data`.
 
+Let's break down the Docker Compose file:
 
+```yaml
+    app:
+      image: easygeoip_app
+      build: .
+      command: ["python", "/srv/app/main.py"]
+      volumes:
+        - .:/srv/app
+      ports:
+       - "5000:5000"
+      environment:
+        - DB_PASSWORD=thepassword
+        - DEBUG=1
+```
 
+|Instruction   | Comments  |
+|--------------|-----------|
+|`image: easygeoip_app`   |Name of the docker image after build   |
+| `build: .`  |  Instruct docker compose to build the image with the Dockerfile under the current  directory|
+|`command: ["python", "/srv/app/main.py"]`   |  Change the default command so that the application can be restarted whenever the source code is updated |
+| `volumes`  |  Mount the current directory at `/srv/app` in the application's container. This is very handy, since an update to the source code won''t require rebuilding the Docker Image (and hence restarting the application container) |
+| `ports`  | Map port `5000` on the container to port `5000`on the host. default all Flask's application use port `5000` the web server port so we're just making sure that it's accesible.   |
+|  `environment` | Here were passing the environment variables required by the application. `DEBUG=1` it's very important since Flask will restart the application whenever the source code is updated.    |
