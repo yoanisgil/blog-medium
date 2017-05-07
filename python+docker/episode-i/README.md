@@ -155,11 +155,11 @@ With the Dockerfile now explained, let's now break down the Docker Compose file:
 
 Go ahead, play with the application, modify it and play with it. You will see the development experience it's quite the same as if the application was running outside Docker :).
 
-# Bonus Track: Debugging the Application with PyCharm
+# What's Next??
 
-So say that there is a bug in the application, a very tricky and difficult one. For sure you could debug the applicaiton using `print` statments or any of the available Flas/Python debuggers ([here](http://werkzeug.pocoo.org/docs/0.11/debug/) and [here](https://docs.python.org/2/library/pdb.html)). 
+With the development environemnt setup and fully working it's now time to deploy to production. But how do we do that? For sure we want the process to be trustable and as predictable as possible. Also, what solutions, cloud-based or not, are available out there that helps the most with our application deployment. 
 
-Personally I've been using Intellij's PyCharm EAP for the last 3 years or so, mainly because of the consistent development experience between their other products (PHPStorm, WebStorm and AppCode), but also because the Docker support is very good.
+This and more will be the subject of **Episode II**, so stay tunned :).
 
 
 
