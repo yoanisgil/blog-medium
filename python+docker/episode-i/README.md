@@ -26,7 +26,7 @@ and then you can enter any IP Address/Domain Name of your choice and you should 
 
 # Running the Python App for the first time
 
-Let's start with the basis and get the application running. First we need to clone the application repository and checkout the Git tag we will be using through this article:
+Let's start with the basics and get the application running. First we need to clone the application repository and checkout the Git tag we will be using through this article:
 
     - git clone https://github.com/yoanisgil/easygeoip.git
     - git checkout blog-episode-i
@@ -124,8 +124,8 @@ The Dockerfile it's pretty explanatory by itself, however let me highlight some 
 
  - We're using `python:2.7-slim` as our base image since we want to keep our Docker image as light as possible. This is very handy specially when it comes to deployment since the image needs to be pulled before been deployed.
  - Those instructions which are not supposed to change very often (apt-get install, apt-get update, etc) are added very early in the file so that we can benefit from the caching mechanisms provided by Docker.
-- The `requirements.txt` file is added indepndently from the application code. This is again, to speed-up the build process since app's dependencies should not change that often.
-- The container entrypoint is [supervisord](http://supervisord.org/). The reason we need `supervisord` is because our container needs to run both NGINX and uWSGI. Also because other many goodies that comes with `supervisord`, like that it can act as a process reaper, make sure processes are always running, etc. 
+- The `requirements.txt` file is added independently from the application code. This is again, to speed-up the build process since app's dependencies should not change that often.
+- The container entrypoint is [supervisord](http://supervisord.org/). The reason we need `supervisord` is because our container needs to run both NGINX and uWSGI. Also because other many goodies that come with `supervisord`, like that it can act as a process reaper, make sure processes are always running, etc.
 - Neither NGINX, nor uWSGI are running as root (not even `supervisord`). They all run as the user `www-data`.
 
 With the Dockerfile now explained, let's now break down the Docker Compose file:
@@ -150,16 +150,16 @@ With the Dockerfile now explained, let's now break down the Docker Compose file:
 | `build: .`  |  Instruct docker compose to build the image with the Dockerfile under the current  directory|
 |`command: ["python", "/srv/app/main.py"]`   |  Change the default command so that the application can be restarted whenever the source code is updated |
 | `volumes`  |  Mount the current directory at `/srv/app` in the application's container. This is very handy, since an update to the source code won''t require rebuilding the Docker Image (and hence restarting the application container) |
-| `ports`  | Map port `5000` on the container to port `5000`on the host. default all Flask's application use port `5000` the web server port so we're just making sure that it's accesible.   |
+| `ports`  | Map port `5000` on the container to port `5000`on the host. default all Flask's application use port `5000` the web server port so we're just making sure that it's accessible.   |
 |  `environment` | Here were passing the environment variables required by the application. `DEBUG=1` it's very important since Flask will restart the application whenever the source code is updated.    |
 
 Go ahead, play with the application, modify it and play with it. You will see the development experience it's quite the same as if the application was running outside Docker :).
 
 # What's Next??
 
-With the development environemnt setup and fully working it's now time to deploy to production. But how do we do that? For sure we want the process to be trustable and as predictable as possible. Also, what solutions, cloud-based or not, are available out there that helps the most with our application deployment. 
+With the development environment setup and fully working it's now time to deploy to production. But how do we do that? For sure we want the process to be trustworthy and as predictable as possible. Also, what solutions, cloud-based or not, are available out there that help the most with our application deployment.
 
-This and more will be the subject of **Episode II**, so stay tunned :).
+This and more will be the subject of **Episode II**, so stay tuned :).
 
 
 
