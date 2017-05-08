@@ -64,7 +64,7 @@ after which you can now go visit http://localhost:5000, and you should see somet
 
 Ok, that was quick. In just a matter of minutes we were able to have a fully working application and with very little effort. Let's see how was this possible. The very first thing that we did was to run:
 
-    - docker-comspoe build app
+    - docker-compose build app
 
 This command is telling Docker Compose to build the service app, which is defined as follows in  the [docker-compose.yml file](https://github.com/yoanisgil/easygeoip/blob/blog-episode-i/docker-compose.yml):
 
